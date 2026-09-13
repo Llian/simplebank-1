@@ -13,7 +13,7 @@ jobs:
     # on every PR without blocking merges.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup-python-env
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload newman report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: newman-report
           path: newman-report/
