@@ -52,8 +52,7 @@ def seed_entry(
 
     account = session.get(Account, payload.account_id)
     if account is None:
-        account = Account(id=payload.account_id, balance=0)
-        session.add(account)
+        raise HTTPException(status_code=404, detail="not_found")
 
     account.balance += payload.amount
     session.add(Entry(account_id=payload.account_id, amount=payload.amount))
