@@ -1,0 +1,17 @@
+name: Setup Python environment
+description: Install Python and the project (with dev extras), with pip caching.
+inputs:
+  python-version:
+    description: Python version to install
+    required: false
+    default: "3.11"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+    - name: Install project (editable, with dev extras)
+      shell: bash
+      run: pip install -e .[dev]

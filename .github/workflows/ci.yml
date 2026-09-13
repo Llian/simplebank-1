@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contract-e2e-newman:
+    runs-on: ubuntu-latest
+    # Remove once /users, /accounts, /transfers are implemented against the
+    # requirements doc — until then this job runs and reports real signal
+    # on every PR without blocking merges.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-python-env
+
+      - uses: ./.github/actions/start-app
+        with:
+          port: "8000"
+          db-path: "ci-test.db"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install newman
+        run: npm install -g newman@6 newman-reporter-htmlextra
+
+      - name: Newman — Users + Accounts
+        run: >
+          newman run requirements/simplebank-postman-collection.json
+          -e contract/postman/environments/ci.postman_environment.json
+          --folder Users --folder Accounts
+          --export-environment /tmp/newman-env-post-accounts.json
+          --reporters cli,htmlextra
+          --reporter-htmlextra-export newman-report/accounts.html
+
+      - name: Seed alice's USD account balance
+        run: >
+          python scripts/ci/seed_balance.py
+          --env /tmp/newman-env-post-accounts.json
+          --base-url http://127.0.0.1:8000
+          --var account_id_usd --amount 10000
+
+      - name: Newman — Transfers
+        run: >
+          newman run requirements/simplebank-postman-collection.json
+          -e /tmp/newman-env-post-accounts.json
+          --folder Transfers
+          --reporters cli,htmlextra
+          --reporter-htmlextra-export newman-report/transfers.html
+
+      - name: Upload newman report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report
+          path: newman-report/

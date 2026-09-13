@@ -1,0 +1,27 @@
+name: Start app
+description: Launch uvicorn in the background against a fresh SQLite db and wait for /healthz.
+inputs:
+  port:
+    description: Port for uvicorn to listen on
+    required: false
+    default: "8000"
+  db-path:
+    description: Path to the fresh SQLite db file to create
+    required: false
+    default: "ci-test.db"
+runs:
+  using: composite
+  steps:
+    - name: Launch uvicorn
+      shell: bash
+      env:
+        DATABASE_URL: sqlite:///${{ inputs.db-path }}
+        ENVIRONMENT: test
+        ENABLE_TEST_ENDPOINTS: "1"
+      run: |
+        rm -f "${{ inputs.db-path }}"
+        nohup uvicorn app.main:app --port "${{ inputs.port }}" > uvicorn.log 2>&1 &
+        echo $! > uvicorn.pid
+    - name: Wait for /healthz
+      shell: bash
+      run: scripts/ci/wait_for_health.sh "http://127.0.0.1:${{ inputs.port }}/healthz" 30

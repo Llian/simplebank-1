@@ -1,0 +1,68 @@
+[project]
+name = "simplebank"
+version = "0.1.0"
+description = "Simple Bank API"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "sqlmodel>=0.0.22",
+  "pydantic-settings>=2.5",
+  "pyjwt>=2.9",
+  "bcrypt>=4.2",
+  "alembic>=1.13",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+  "httpx2>=2.0",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "bandit>=1.7",
+  "mutmut>=3.2",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "unit: fast, isolated, no I/O",
+  "integration: FastAPI TestClient + real file-based SQLite db",
+]
+filterwarnings = [
+  # starlette/testclient.py:53 references its own deprecated anyio.abc.BlockingPortal
+  # alias in a type annotation at import time; nothing to fix on our side (starlette
+  # is already at latest). Narrowly scoped to that one message so other deprecation
+  # warnings still surface.
+  "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning:starlette.testclient",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.mutmut]
+paths_to_mutate = "app/"
+tests_dir = "tests/unit/"
+runner = "python -m pytest tests/unit -x -q"
