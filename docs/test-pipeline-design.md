@@ -193,9 +193,10 @@ tracked outside this doc.
 
 ## Revisit later
 
-- Add `static-analysis`, `unit-tests`, `integration-tests`,
-  `mutation-testing` job blocks to `ci.yml` (additive, per the patterns
-  above).
+- Add a `mutation-testing` job block to `ci.yml` (additive, per the patterns
+  above) — `static-analysis`, `unit-tests`, and `integration-tests` are
+  wired in as of this writing, declared in that order (matching the readme's
+  walk-through order) but still independent, no `needs:` between them.
 - Remove `continue-on-error: true` from `contract-e2e-newman` once the real
   API surface exists.
 - Add `needs:` gating if parallel-job CI cost becomes material.

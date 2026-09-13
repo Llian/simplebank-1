@@ -141,11 +141,14 @@ reference implementation, but that's deferred — see the design doc.
 
 ## 8. Automated (CI) runs
 
-Every push/PR on GitHub automatically runs the contract/e2e stage above
-(section 5) via `.github/workflows/ci.yml` — you don't need to trigger it
-yourself. Its report is attached to the run as a downloadable
-`newman-report` artifact. The other stages (unit, integration, static
-analysis, mutation) aren't wired into CI yet, so run them locally for now.
+Every push/PR on GitHub automatically runs unit tests, integration tests,
+static analysis, and the contract/e2e stage above (sections 2-5) via
+`.github/workflows/ci.yml` — you don't need to trigger them yourself. These
+jobs run independently (no stage waits on another), so they can finish in
+any order; the Newman job's report is attached to the run as a downloadable
+`newman-report` artifact. Mutation testing (section 6) isn't wired into CI
+yet — it's meant for `schedule`/`workflow_dispatch` runs, not every PR — so
+run it locally for now.
 
 ## Troubleshooting
 

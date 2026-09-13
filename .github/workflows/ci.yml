@@ -6,6 +6,45 @@ on:
   pull_request:
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/setup-python-env
+
+      - name: Run unit tests
+        run: pytest tests/unit -m unit
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/setup-python-env
+
+      - name: Run integration tests
+        run: pytest tests/integration -m integration
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/setup-python-env
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: mypy
+        run: mypy app
+
+      - name: Bandit
+        run: bandit -r app
+
   contract-e2e-newman:
     runs-on: ubuntu-latest
     # Remove once /users, /accounts, /transfers are implemented against the
