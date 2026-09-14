@@ -27,9 +27,7 @@ def _auth_headers(login_body: dict[str, str]) -> dict[str, str]:
 @pytest.mark.integration
 def test_create_account_returns_201(client: TestClient) -> None:
     login_body = _register_and_login(client)
-    response = client.post(
-        "/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body)
-    )
+    response = client.post("/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body))
     assert response.status_code == 201
     body = response.json()
     assert body["owner"] == "alice"
@@ -49,9 +47,7 @@ def test_create_account_invalid_currency_returns_400_validation_error(
     client: TestClient,
 ) -> None:
     login_body = _register_and_login(client)
-    response = client.post(
-        "/accounts", json={"currency": "GBP"}, headers=_auth_headers(login_body)
-    )
+    response = client.post("/accounts", json={"currency": "GBP"}, headers=_auth_headers(login_body))
     assert response.status_code == 400
     assert response.json()["error"] == "validation_error"
 
@@ -60,9 +56,7 @@ def test_create_account_invalid_currency_returns_400_validation_error(
 def test_create_duplicate_currency_account_returns_409(client: TestClient) -> None:
     login_body = _register_and_login(client)
     client.post("/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body))
-    response = client.post(
-        "/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body)
-    )
+    response = client.post("/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body))
     assert response.status_code == 409
     assert response.json()["error"] == "duplicate_account"
 
@@ -129,9 +123,7 @@ def test_list_accounts_without_auth_returns_401(client: TestClient) -> None:
 @pytest.mark.integration
 def test_account_creation_persists_row(client: TestClient, db_session: Session) -> None:
     login_body = _register_and_login(client)
-    response = client.post(
-        "/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body)
-    )
+    response = client.post("/accounts", json={"currency": "USD"}, headers=_auth_headers(login_body))
     account_id = response.json()["id"]
     account = db_session.get(Account, account_id)
     assert account is not None

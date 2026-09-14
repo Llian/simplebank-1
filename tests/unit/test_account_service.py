@@ -36,9 +36,7 @@ class FakeAccountRepository:
             and self.get_by_owner_and_currency_call_count == 1
         ):
             return None
-        return next(
-            (a for a in self.accounts if a.owner == owner and a.currency == currency), None
-        )
+        return next((a for a in self.accounts if a.owner == owner and a.currency == currency), None)
 
     def list_by_owner(self, *, owner: str, page_id: int, page_size: int) -> list[Account]:
         matches = [a for a in self.accounts if a.owner == owner]
