@@ -25,9 +25,9 @@ def login_user(payload: UserLoginRequest) -> LoginResponse:
     now = datetime.now(UTC)
     return LoginResponse(
         session_id="00000000-0000-0000-0000-000000000000",
-        access_token="dummy-access-token",  # noqa: S106 -- placeholder, not a secret
+        access_token="dummy-access-token",  # noqa: S106  # nosec B106 -- placeholder, not a secret
         access_token_expires_at=now,
-        refresh_token="dummy-refresh-token",  # noqa: S106 -- placeholder, not a secret
+        refresh_token="dummy-refresh-token",  # noqa: S106  # nosec B106 -- placeholder, not a secret
         refresh_token_expires_at=now,
         user=UserResponse(
             username=payload.username,
