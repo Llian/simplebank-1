@@ -1,9 +1,6 @@
 """Domain exceptions (requirements §6).
 
-One class per error-table row that a service currently raises. `not_found`
-and the currency/ownership/insufficient-funds codes are intentionally not
-defined yet — the accounts/transfers implementation will add them here using
-the same base and naming.
+One class per error-table row that a service raises.
 """
 
 
@@ -36,3 +33,28 @@ class InvalidCredentialsError(DomainError):
 class UnauthorizedError(DomainError):
     status_code = 401
     error_code = "unauthorized"
+
+
+class ForbiddenError(DomainError):
+    status_code = 403
+    error_code = "forbidden"
+
+
+class NotFoundError(DomainError):
+    status_code = 404
+    error_code = "not_found"
+
+
+class DuplicateAccountError(DomainError):
+    status_code = 409
+    error_code = "duplicate_account"
+
+
+class CurrencyMismatchError(DomainError):
+    status_code = 400
+    error_code = "currency_mismatch"
+
+
+class InsufficientFundsError(DomainError):
+    status_code = 400
+    error_code = "insufficient_funds"

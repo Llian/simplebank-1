@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.api.schemas.account import AccountResponse
 from app.db.models import Currency
@@ -9,7 +9,7 @@ from app.db.models import Currency
 class TransferRequest(BaseModel):
     from_account_id: int
     to_account_id: int
-    amount: int
+    amount: int = Field(gt=0)
     currency: Currency
 
 
