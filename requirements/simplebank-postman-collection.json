@@ -173,7 +173,7 @@
             "script": { "exec": [
               "pm.test('status 201', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
-              "pm.test('owner is alice', () => pm.expect(body.owner).to.eql(pm.environment.get('username')));",
+              "pm.test('owner is alice', () => pm.expect(body.owner).to.eql(pm.variables.get('username')));",
               "pm.environment.set('account_id_usd', body.id);"
             ]}
           }]
@@ -223,7 +223,7 @@
             "listen": "test",
             "script": { "exec": [
               "pm.test('status 200', () => pm.response.to.have.status(200));",
-              "pm.test('owner matches', () => pm.expect(pm.response.json().owner).to.eql(pm.environment.get('username')));"
+              "pm.test('owner matches', () => pm.expect(pm.response.json().owner).to.eql(pm.variables.get('username')));"
             ]}
           }]
         },

@@ -47,10 +47,6 @@ jobs:
 
   contract-e2e-newman:
     runs-on: ubuntu-latest
-    # Remove once /users, /accounts, /transfers are implemented against the
-    # requirements doc — until then this job runs and reports real signal
-    # on every PR without blocking merges.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
 
