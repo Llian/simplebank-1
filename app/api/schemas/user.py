@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class UserCreateRequest(BaseModel):
-    username: str
-    password: str
-    full_name: str
-    email: str
+    username: str = Field(min_length=3, max_length=32)
+    password: str = Field(min_length=8, max_length=72)
+    full_name: str = Field(min_length=1)
+    email: str = Field(min_length=1)
 
 
 class UserResponse(BaseModel):
@@ -19,8 +19,8 @@ class UserResponse(BaseModel):
 
 
 class UserLoginRequest(BaseModel):
-    username: str
-    password: str
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
 
 
 class LoginResponse(BaseModel):
