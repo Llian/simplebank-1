@@ -5,6 +5,10 @@ from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session
 
+from app.api.routers.accounts import router as accounts_router
+from app.api.routers.tokens import router as tokens_router
+from app.api.routers.transfers import router as transfers_router
+from app.api.routers.users import router as users_router
 from app.core.config import get_settings
 from app.db.models import Account, Entry
 from app.db.session import create_db_and_tables, get_session
@@ -20,6 +24,11 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Simple Bank", lifespan=lifespan)
+
+app.include_router(users_router)
+app.include_router(tokens_router)
+app.include_router(accounts_router)
+app.include_router(transfers_router)
 
 
 @app.get("/healthz")
