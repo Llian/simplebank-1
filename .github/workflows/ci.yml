@@ -78,11 +78,14 @@ jobs:
           --reporter-htmlextra-export newman-report/accounts.html
 
       - name: Seed alice's USD account balance
+        # 50: enough for the Transfers folder's "Successful Transfer" (25) but
+        # still short of "Insufficient Funds" (100), which needs the transfer
+        # to be rejected — both run against this same seeded account.
         run: >
           python scripts/ci/seed_balance.py
           --env /tmp/newman-env-post-accounts.json
           --base-url http://127.0.0.1:8000
-          --var account_id_usd --amount 10000
+          --var account_id_usd --amount 50
 
       - name: Newman — Transfers
         run: >
