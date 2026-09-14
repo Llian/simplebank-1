@@ -12,11 +12,15 @@ class UserService:
     def __init__(self, user_repo: UserRepository) -> None:
         self._user_repo = user_repo
 
-    def register_user(self, *, username: str, password: str, full_name: str, email: str) -> User:
+    def _raise_if_duplicate(self, *, username: str, email: str) -> None:
+        """Check the fields the DB enforces as unique (see User.__table_args__)."""
         if self._user_repo.get_by_username(username) is not None:
-            raise DuplicateUsernameError(f"username '{username}' is already taken")
+            raise DuplicateUsernameError(f"username '{username}' is already taken") from None
         if self._user_repo.get_by_email(email) is not None:
-            raise DuplicateEmailError(f"email '{email}' is already registered")
+            raise DuplicateEmailError(f"email '{email}' is already registered") from None
+
+    def register_user(self, *, username: str, password: str, full_name: str, email: str) -> User:
+        self._raise_if_duplicate(username=username, email=email)
 
         hashed_password = hash_password(password)
         try:
@@ -27,8 +31,8 @@ class UserService:
                 email=email,
             )
         except IntegrityError:
-            if self._user_repo.get_by_username(username) is not None:
-                raise DuplicateUsernameError(f"username '{username}' is already taken") from None
-            if self._user_repo.get_by_email(email) is not None:
-                raise DuplicateEmailError(f"email '{email}' is already registered") from None
+            # Race: another request took the username/email between the check
+            # above and this insert. Re-check to raise the specific duplicate
+            # error instead of a raw IntegrityError.
+            self._raise_if_duplicate(username=username, email=email)
             raise
